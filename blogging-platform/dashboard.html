@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            fetchBlogs();
+        });
+
+        async function fetchBlogs() {
+            const response = await fetch("/blogs");
+            const blogs = await response.json();
+            document.getElementById("blogList").innerHTML = "";
+            
+            blogs.forEach(blog => {
+                const div = document.createElement("div");
+                div.innerHTML = `
+                    <h3>${blog.title}</h3>
+                    <p><strong>By:</strong> ${blog.username}</p>
+                    <p>${blog.content}</p>
+                    <p><em>${blog.date}</em></p>
+                    <hr>
+                `;
+                document.getElementById("blogList").appendChild(div);
+            });
+        }
+
+        async function createPost() {
+            const title = document.getElementById("title").value;
+            const content = document.getElementById("content").value;
+
+            if (!title || !content) {
+                alert("Please enter title and content.");
+                return;
+            }
+
+            const response = await fetch("/blogs", {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: `title=${title}&content=${content}`
+            });
+
+            if (response.ok) {
+                document.getElementById("title").value = "";
+                document.getElementById("content").value = "";
+                fetchBlogs();
+            }
+        }
+    </script>
+</head>
+<body>
+    <h2>Welcome to your Dashboard!</h2>
+    <a href="/logout">Logout</a>
+
+    <h3>Create a Blog Post</h3>
+    <input type="text" id="title" placeholder="Title">
+    <textarea id="content" placeholder="Write your blog..."></textarea>
+    <button onclick="createPost()">Post</button>
+
+    <h3>All Blog Posts</h3>
+    <div id="blogList"></div>
+</body>
+</html>

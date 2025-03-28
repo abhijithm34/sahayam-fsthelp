@@ -1,0 +1,5 @@
+{
+    "admin": { "password": "adminpass", "role": "admin" },
+    "testuser": { "password": "1234", "role": "user" }
+  }
+  
